@@ -30,25 +30,10 @@ let marker = new mapboxgl.Marker({
 
 
 
-let daysForm = `<div class="card  forecast__body">
-                <div class="card-header date">
-                    ${today}
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">min: ${temp_min}℉
-                      max: ${temp_max}℉<br>
-                    <img src="http://openweathermap.org/img/w/${weather_icon}.png" style="display:inline-block"></li>
-                    <li class="list-group-item">Description :<br> ${weather_description}</li>
-                    <li class="list-group-item">Humidity : ${humidity}</li>
-                    <li class="list-group-item">Wind : ${wind_speed}</li>
-                    <li class="list-group-item">Pressure : ${weather_pressure}</li>
-                </ul>
-            </div>`;
-
 //first page weather with baseline address.
 
 
-$.get("http://api.openweathermap.org/data/2.5/onecall?", {
+$.get("http://api.openweathermap.org/data/2.5/onecall", {
     APPID: weatherKey,
     lon: -98.48527,
     lat: 29.423017,
@@ -63,13 +48,29 @@ $.get("http://api.openweathermap.org/data/2.5/onecall?", {
 
     sliceDays.forEach(function (day) {
         today = new Date(day.dt * 1000).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) // change the unix date unit into date
-        temp_min = day.temp.min;
+        temp_min = day.temp.min
         temp_max = day.temp.max;
-        weather_description = day.weather[0].description;
+        weather_description =day.weather[0].description;
         humidity = day.humidity;
         wind_speed = day.wind_speed;
         weather_pressure = day.pressure;
         weather_icon = day.weather[0].icon
+
+
+        let daysForm = `<div class="card  forecast__body">
+                <div class="card-header date">
+                    ${today}
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">min: ${temp_min}℉
+                      max: ${temp_max}℉  <br>
+                    <img src="http://openweathermap.org/img/w/${weather_icon}.png" style="display:inline-block"></li>
+                    <li class="list-group-item">Description :<br> ${weather_description}</li>
+                    <li class="list-group-item">Humidity : ${humidity}</li>
+                    <li class="list-group-item">Wind : ${wind_speed}</li>
+                    <li class="list-group-item">Pressure : ${weather_pressure}</li>
+                </ul>
+            </div>`;
 
 
         $('#card_table').append(daysForm)
@@ -95,7 +96,7 @@ function onDragEnd() {
 
 
 
-    $.get("http://api.openweathermap.org/data/2.5/onecall?", {
+    $.get("http://api.openweathermap.org/data/2.5/onecall", {
         APPID: weatherKey,
         lat: geo_lat,
         lon: geo_lon,
@@ -125,14 +126,29 @@ function onDragEnd() {
                 day: 'numeric'
             }) // change the unix date unit into date
             console.log(today);
-            temp_min = day.temp.min;
             console.log(temp_min);
+            temp_min = day.temp.min;
             temp_max = day.temp.max;
             weather_description = day.weather[0].description;
             humidity = day.humidity;
             wind_speed = day.wind_speed;
             weather_pressure = day.pressure;
             weather_icon = day.weather[0].icon
+
+            let daysForm = `<div class="card  forecast__body">
+                <div class="card-header date">
+                    ${today}
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">min: ${temp_min}℉
+                      max: ${temp_max}℉  <br>
+                    <img src="http://openweathermap.org/img/w/${weather_icon}.png" style="display:inline-block"></li>
+                    <li class="list-group-item">Description :<br> ${weather_description}</li>
+                    <li class="list-group-item">Humidity : ${humidity}</li>
+                    <li class="list-group-item">Wind : ${wind_speed}</li>
+                    <li class="list-group-item">Pressure : ${weather_pressure}</li>
+                </ul>
+            </div>`;
 
 
             $('#card_table').append(daysForm);
@@ -147,6 +163,10 @@ marker.on('dragend', onDragEnd);
 
 // this is function to get the coordinate from input
 
+// grab an value from user input -->$("#geocoder").val()
+//when click button, run map api to get geocode of the val() , assign it in to  variable ,plugin that variable to weather api lon: and lat: .
+//then render weather information of the input
+
 function geocode(search, token) {
     var baseUrl = 'https://api.mapbox.com';
     var endPoint = '/geocoding/v5/mapbox.places/';
@@ -156,7 +176,8 @@ function geocode(search, token) {
             return res.json();
             // to get all the data from the request, comment out the following three lines...
         }).then(function(data) {
-            return data.features[0].center;
+            return data.features[0].center
+            console.log(data.features[0].center)
         });
 }
 
