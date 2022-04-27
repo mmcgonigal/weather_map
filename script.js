@@ -43,6 +43,8 @@ $.get("https://api.openweathermap.org/data/2.5/onecall", {
     // console.log(data.lat)
     // console.log(data.lon)
     //new LngLat = (lng: data.lon, lat: data.lat)
+
+
     let sliceDays = data.daily.slice(0, 5)  // extract 5 days out of 7 days array.
     console.log(sliceDays)
 
@@ -189,46 +191,82 @@ $('.search__button').on('click',()=>{
     let address=$(".geocoder").val()
     console.log(address);
     searchByInput(address)
+    function placeMarkerAndPopup(info, mapKey, map) {
+        geocode(info.address, mapKey).then(function(coordinates) {
+            var popup = new mapboxgl.Popup()
+                .setHTML(info.popupHTML);
+            var marker = new mapboxgl.Marker()
+                .setLngLat(coordinates)
+                .addTo(map)
+                .setPopup(popup);
+            popup.addTo(map);
+        });
+
 
 })
 
-//1.
 
+
+//1.
+let coor =[];
 function searchByInput(address){
     console.log("searchByinput address : "  ,address)
     geocode(address,mapKey).then(function(coordinates) {
             console.log(coordinates);
             console.log(coordinates[0])
             console.log(coordinates[1])
-
-        return coordinates;
+            for(let i = 0 ; i < coordinates.length ; i++){
+                coor.push(coordinates[i])
+            }
+            console.log(coor)
+        return coor;
         }).then(
 // i need to set lon and lat from coordiates to weathermap API
     $.get("https://api.openweathermap.org/data/2.5/onecall", {
         APPID: weatherKey,
-        lon: coordinates[0],
-        lat: coordinates[1],
+        lon: coor[0],
+        lat: coor[1],
         units: "imperial",
         exclude: "current,hourly,hourly,alerts"
     }).done(function (data) {
         // console.log(data.lat)
         // console.log(data.lon)
         //new LngLat = (lng: data.lon, lat: data.lat)
+        console.log(data);
+        let marker = new mapboxgl.Marker({
+            draggable: true
+        })
+            .setLngLat([-98.4936, 29.4241])
+            .addTo(map);
+
 
 
         let sliceDays = data.daily.slice(0, 5)  // extract 5 days out of 7 days array.
         console.log(sliceDays)
-        today = new Date(day.dt * 1000).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) // change the unix date unit into date
-        temp_min = day.temp.min;
-        temp_max = day.temp.max;
-        weather_description = day.weather[0].description;
-        humidity = day.humidity;
-        wind_speed = day.wind_speed;
-        weather_pressure = day.pressure;
-        weather_icon = day.weather[0].icon
+
+        $('#card_table').empty()
+
+        //new5days.forEach(function (day) {
+        for (let i = 0; i < 5; i++) {
+
+            let day = sliceDays[i]
 
 
-        let daysForm = `<div class="card  forecast__body">
+            let today = new Date(day.dt * 1000).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) // change the unix date unit into date
+            temp_min = day.temp.min;
+            temp_max = day.temp.max;
+            weather_description = day.weather[0].description;
+            humidity = day.humidity;
+            wind_speed = day.wind_speed;
+            weather_pressure = day.pressure;
+            weather_icon = day.weather[0].icon
+
+
+            let daysForm = `<div class="card  forecast__body">
                 <div class="card-header date">
                     ${today}
                 </div>
@@ -242,7 +280,9 @@ function searchByInput(address){
                     <li class="list-group-item">Pressure : ${weather_pressure}</li>
                 </ul>
             </div>`;
-        $('#card_table').append(daysForm)
+            $('#card_table').append(daysForm)
+
+        }
     })
     )
 }
