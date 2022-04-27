@@ -48,7 +48,7 @@ let marker = new mapboxgl.Marker({
          // console.log(data.lon)
          //new LngLat = (lng: data.lon, lat: data.lat)
 
-         $('#nameOfcityname').html(reverseGeocode(coordinates, mapKey))
+
 
 
          let sliceDays = data.daily.slice(0, 5)  // extract 5 days out of 7 days array.
@@ -107,7 +107,7 @@ function onDragEnd() {
 
     console.log(geo_lon)
     console.log(geo_lat)
-    $('#nameOfcityname').html(reverseGeocode(coordinates, mapKey))
+
 
     $.get("https://api.openweathermap.org/data/2.5/onecall", {
         APPID: weatherKey,
